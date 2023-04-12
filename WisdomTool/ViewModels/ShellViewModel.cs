@@ -9,11 +9,6 @@ namespace WisdomTool.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class ShellViewModel : Conductor<object>.Collection.OneActive
     {
-
-        private readonly ModbusRtuViewModel _modbusRtuViewModel;
-        private readonly ModbusRtuViewModel _modbusRtuViewModel2;
-        private readonly StepModeViewModel _stepModeViewModel;
-
         private readonly IWindowManager _windowManager;
         private readonly SimpleContainer _container;
 
@@ -21,10 +16,6 @@ namespace WisdomTool.ViewModels
         {
             _windowManager = windowManager;
             _container = container;
-
-            _modbusRtuViewModel = IoC.Get<ModbusRtuViewModel>("A");
-            _modbusRtuViewModel2 = IoC.Get<ModbusRtuViewModel>("C");
-            _stepModeViewModel = IoC.Get<StepModeViewModel>("StepMode1");
         }
 
         public Task About()
@@ -37,7 +28,6 @@ namespace WisdomTool.ViewModels
         {
             base.OnViewLoaded(view);
             //初始化界面
-            //await Navigate(_modbusRtuViewModel);
             await Navigate(IoC.Get<OverToSingleViewModel>("OverToSingle"));
         }
 
@@ -48,9 +38,9 @@ namespace WisdomTool.ViewModels
             //viewname = viewname.Substring(viewname.IndexOf(':') + 1).Trim();
             switch (viewname)
             {
-                case "ModbusdRTU1": await Navigate(_modbusRtuViewModel); break;
-                case "ModbusdRTU2": await Navigate(_modbusRtuViewModel2); break;
-                case "StepMode": await Navigate(_stepModeViewModel); break;
+                case "ModbusdRTU1": await Navigate(IoC.Get<ModbusRtuViewModel>("A")); break;
+                case "ModbusdRTU2": await Navigate(IoC.Get<ModbusRtuViewModel>("C")); break;
+                case "StepMode": await Navigate(IoC.Get<StepModeViewModel>("StepMode1")); break;
                 case "OverToSingle": await Navigate(IoC.Get<OverToSingleViewModel>("OverToSingle")); break;
             }
         }

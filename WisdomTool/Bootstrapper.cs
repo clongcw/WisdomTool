@@ -36,12 +36,12 @@ namespace WisdomTool
                    viewModelType, viewModelType.ToString(), viewModelType));
             }
 
-            _container.RegisterInstance(typeof(ModbusRtuViewModel), "A", new ModbusRtuViewModel());
-            _container.RegisterInstance(typeof(ModbusRtuViewModel), "B", new ModbusRtuViewModel());
-            _container.RegisterInstance(typeof(ModbusRtuViewModel), "C", new ModbusRtuViewModel());
-            _container.RegisterInstance(typeof(A1ViewModel), "A1", new A1ViewModel());
+            //_container.RegisterInstance(typeof(ModbusRtuViewModel), "A", new ModbusRtuViewModel());
+            //_container.RegisterInstance(typeof(ModbusRtuViewModel), "B", new ModbusRtuViewModel());
+            //_container.RegisterInstance(typeof(ModbusRtuViewModel), "C", new ModbusRtuViewModel());
+            //_container.RegisterInstance(typeof(A1ViewModel), "A1", new A1ViewModel());
             _container.RegisterInstance(typeof(OverToSingleViewModel), "OverToSingle", new OverToSingleViewModel());
-            _container.RegisterInstance(typeof(StepModeViewModel), "StepMode1", new StepModeViewModel());
+            //_container.RegisterInstance(typeof(StepModeViewModel), "StepMode1", new StepModeViewModel());
             //_container.Instance(new StepModeViewModel());
         }
 
@@ -65,10 +65,10 @@ namespace WisdomTool
             _container.BuildUp(instance);
         }
 
-        protected override void OnExit(object sender, EventArgs e)
-        {
-            //关闭WPF之后即关闭所有进程
-            Environment.Exit(0);
-        }
+        //protected override void OnExit(object sender, EventArgs e)
+        //{
+        //    //关闭WPF之后即关闭所有进程
+        //    Environment.Exit(0);
+        //}
     }
 }

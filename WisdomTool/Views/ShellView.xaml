@@ -38,6 +38,7 @@
         <pu:Drawer
             MinWidth="60"
             MaxWidth="250"
+            Visibility="Collapsed"
             BorderThickness="0,0,1,0"
             ShadowColor="{x:Null}">
             <ListBox
@@ -52,6 +53,6 @@
             </ListBox>
         </pu:Drawer>
 
-        <ContentControl x:Name="ActiveItem" Grid.Column="1" />
+        <ContentControl x:Name="ActiveItem" Grid.Column="1" Grid.ColumnSpan="2"/>
     </Grid>
 </pu:WindowX>

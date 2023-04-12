@@ -1,4 +1,5 @@
 ﻿using AjaxControlToolkit.HtmlEditor.ToolbarButtons;
+using Caliburn.Micro;
 using MiniExcelLibs;
 using OfficeOpenXml;
 using Panuon.WPF.UI;
@@ -11,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Input;
 using Wisdom.Shared.Common;
 using WisdomTool.Enums;
 using File = System.IO.File;
@@ -22,8 +24,8 @@ namespace WisdomTool.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class OverToSingleViewModel : Caliburn.Micro.Screen
     {
-        public string ExcelPath { get; set; } //= @"C:\Users\clongc\Desktop\HaiLing\资金测算_公式.xlsx";
-        public string TemplateExcelPath { get; set; }// = @"C:\Users\clongc\Desktop\HaiLing\Template3 的副本.xlsx";
+        public string ExcelPath { get; set; } = @"C:\Users\clongc\Desktop\资金测算_公式(宝应)01(1) 的副本.xlsx";
+        public string TemplateExcelPath { get; set; } = @"C:\Users\clongc\Desktop\HaiLing\附件12模板.xlsx";
         //public string TmpPath { get; set; } = @"C:\Users\clongc\Desktop\HaiLing\Tmp\";
         public string TmpPath { get; set; }
         public string MergedName { get; set; } //= "请点击左侧按钮，注意输出文件夹不能选择Tmp";
@@ -262,6 +264,10 @@ namespace WisdomTool.ViewModels
                         var result = row[columns[i]].ToString();
                         newdatas.Add(result);
                     }
+                    else
+                    {
+                        newdatas.Add("");
+                    }
                 }
 
                 if (TemplateOptions == TemplateOptions.附件13)
@@ -330,14 +336,16 @@ namespace WisdomTool.ViewModels
                 }
                 else
                 {
-                    for (int k = 1; k < newdatas.Count; k++)
+                    value.Add("Name", newdatas[0]);
+                    value.Add("Id", newdatas[1]);
+                    for (int k = 3; k < newdatas.Count; k++)
                     {
-                        string key = "A" + (k - 1).ToString();
+                        string key = "A" + (k - 3).ToString();
                         value.Add(key, newdatas[k]); // null代表暂时没有值
                     }
 
 
-                    MiniExcel.SaveAsByTemplate(TmpPath + newdatas[2] + ".xlsx", TemplateExcelPath, value);
+                    MiniExcel.SaveAsByTemplate(TmpPath + newdatas[0] + ".xlsx", TemplateExcelPath, value);
                 }
 
 
@@ -412,7 +420,7 @@ namespace WisdomTool.ViewModels
             Schedule = 0;
             if (!Regex.IsMatch(MergedName, "[a-gA-G]"))
             {
-                App.Current.Dispatcher.Invoke((Action)(() =>
+                App.Current.Dispatcher.Invoke((System.Action)(() =>
                 {
                     MessageBoxX.Show(null, "请先点击左侧按钮！", "消息提示", MessageBoxButton.OK, MessageBoxIcon.Warning);
                 }));
@@ -421,7 +429,7 @@ namespace WisdomTool.ViewModels
 
             if (string.IsNullOrEmpty(StartColumn) || string.IsNullOrEmpty(EndColumn))
             {
-                App.Current.Dispatcher.Invoke((Action)(() =>
+                App.Current.Dispatcher.Invoke((System.Action)(() =>
                 {
                     MessageBoxX.Show(null, "请选择生成列数！", "消息提示", MessageBoxButton.OK, MessageBoxIcon.Warning);
                 }));
@@ -451,7 +459,7 @@ namespace WisdomTool.ViewModels
             }
             else
             {
-                App.Current.Dispatcher.Invoke((Action)(() =>
+                App.Current.Dispatcher.Invoke((System.Action)(() =>
                 {
                     MessageBoxX.Show(null, "当先数据源未定义！", "消息提示", MessageBoxButton.OK, MessageBoxIcon.Warning);
                 }));
@@ -461,7 +469,7 @@ namespace WisdomTool.ViewModels
 
             await MergeExcelFiles();
 
-            App.Current.Dispatcher.Invoke((Action)(() =>
+            App.Current.Dispatcher.Invoke((System.Action)(() =>
             {
                 MessageBoxX.Show(null, "新文件已生成！", "消息提示", MessageBoxButton.OK, MessageBoxIcon.Success);
             }));
