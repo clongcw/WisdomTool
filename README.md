@@ -7,4 +7,4 @@
 ## 界面预览
 
 
-![anchor text](./image/WisdomTool界面预览.png "界面预览")
+![anchor text](./Image/WisdomTool界面预览.png "界面预览")
