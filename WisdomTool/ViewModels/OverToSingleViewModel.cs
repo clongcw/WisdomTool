@@ -60,12 +60,12 @@ namespace WisdomTool.ViewModels
                 }
             }
         }
-        public TemplateOptions TemplateOptions { get; set; } = TemplateOptions.附件13;
+        public TemplateOptions TemplateOptions { get; set; } = TemplateOptions.附件12;
 
         /// <summary>
         /// 开始列
         /// </summary>
-        public string StartColumn { get; set; } = "A";
+        public string StartColumn { get; set; } = "B";
 
         /// <summary>
         /// 结束列
