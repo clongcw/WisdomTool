@@ -1,0 +1,206 @@
+﻿<UserControl
+    x:Class="WisdomTool.Views.A1View"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:WisdomTool.UI.Controls;assembly=WisdomTool.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:WisdomTool.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pu="clr-namespace:Panuon.WPF.UI;assembly=Panuon.WPF.UI"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <StackPanel>
+        <WrapPanel HorizontalAlignment="Center">
+            <pu:FormGroup
+                Margin="20"
+                FontSize="22"
+                FontWeight="Bold"
+                GroupName="MyFormGroup"
+                Header="代号 : ">
+                <TextBox Width="200" Text="DDP6" />
+            </pu:FormGroup>
+            <pu:FormGroup
+                Margin="20"
+                FontSize="22"
+                FontWeight="Bold"
+                GroupName="MyFormGroup"
+                Header="批号 : ">
+                <TextBox Width="200" Text="Ddpxt" />
+            </pu:FormGroup>
+        </WrapPanel>
+
+        <TabControl Style="{StaticResource SubMenuTabControlStyle}">
+            <TabItem Header="测试参数" Style="{StaticResource tset}">
+                <GroupBox Margin="20" Header="控制参数设置">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="120,5">
+                            <pu:FormGroup GroupName="MyFormGroup" Header="预置次数 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="100" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="动作次率(次/分) : ">
+                                <TextBox Style="{DynamicResource A1TextBoxStyle}" Text="30" />
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="通断比 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="1:1" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="监测时间(%) : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="40" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="负载电压(V) : ">
+                                <TextBox Style="{DynamicResource A1TextBoxStyle}" Text="28" />
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="负载电压检测 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="是" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="负载性质 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="阴性" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="该触电电压间隔 : ">
+                                <TextBox Style="{DynamicResource A1TextBoxStyle}" Text="5000" />
+                            </pu:FormGroup>
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Margin="120,5">
+                            <pu:FormGroup GroupName="MyFormGroup" Header="继电器类型 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="磁保持型" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="脉冲宽度(ms) : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="50" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="故障脉宽(ms) : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="0.5" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="故障限(次) : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="20" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="到故障限 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="不停机" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="出现故障 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="不停机" />
+                                </ComboBox>
+                            </pu:FormGroup>
+                            <pu:FormGroup GroupName="MyFormGroup" Header="停机状态 : ">
+                                <ComboBox
+                                    Margin="10"
+                                    SelectedIndex="0"
+                                    Style="{DynamicResource StandardComboBoxStyle}">
+                                    <ComboBoxItem Content="断开" />
+                                </ComboBox>
+                            </pu:FormGroup>
+
+                        </StackPanel>
+                        <GroupBox
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="50,5"
+                            Header="灵敏度设置">
+                            <WrapPanel HorizontalAlignment="Center">
+                                <pu:FormGroup
+                                    Margin="20"
+                                    GroupName="MyFormGroup"
+                                    Header="1-24路断灵敏度(V) : ">
+                                    <TextBox
+                                        Width="100"
+                                        Height="30"
+                                        Text="1.4" />
+                                </pu:FormGroup>
+                                <pu:FormGroup
+                                    Margin="20"
+                                    GroupName="MyFormGroup"
+                                    Header="1-24路粘灵敏度(%) : ">
+                                    <ComboBox
+                                        Margin="10"
+                                        SelectedIndex="0"
+                                        Style="{DynamicResource StandardComboBoxStyle}">
+                                        <ComboBoxItem Content="95" />
+                                    </ComboBox>
+                                </pu:FormGroup>
+                            </WrapPanel>
+                        </GroupBox>
+                    </Grid>
+                </GroupBox>
+            </TabItem>
+            <TabItem Header="监测方式" Style="{StaticResource tset}" />
+            <TabItem Header="打印参数" Style="{StaticResource tset}" />
+        </TabControl>
+
+        <controls:MaskedTextbox Width="200" Mask="[^0-1]"/>
+
+
+        <WrapPanel HorizontalAlignment="Center">
+            <Button Content="取消[E]" Style="{DynamicResource A1ButtonStyle}" />
+            <Button Content="确定[S]" Style="{DynamicResource A1ButtonStyle}" />
+            <Button Content="自检[J]" Style="{DynamicResource A1ButtonStyle}" />
+            <Button Content="重新[R]" Style="{DynamicResource A1ButtonStyle}" />
+            <Button Content="继续[C]" Style="{DynamicResource A1ButtonStyle}" />
+            <Button Content="故障[B]" Style="{DynamicResource A1ButtonStyle}" />
+        </WrapPanel>
+    </StackPanel>
+</UserControl>

@@ -1,0 +1,769 @@
+﻿<UserControl
+    x:Class="WisdomTool.Views.ModbusRtuView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Controls="clr-namespace:WisdomTool.Controls"
+    xmlns:cm="http://www.caliburnproject.org"
+    xmlns:cvt="clr-namespace:WisdomTool.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ext="clr-namespace:WisdomTool.Extensions"
+    xmlns:local="clr-namespace:WisdomTool.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:model="clr-namespace:WisdomTool.Models"
+    xmlns:pu="clr-namespace:Panuon.WPF.UI;assembly=Panuon.WPF.UI"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TabControl Style="{StaticResource SubMenuTabControlStyle}">
+            <TabItem Header="自定义帧"  Style="{StaticResource tset}" >
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <pu:Drawer
+                        x:Name="DrwMenu"
+                        MaxWidth="250"
+                        BorderThickness="0"
+                        IsOpen="False"
+                        ShadowColor="{x:Null}">
+                        <Border DockPanel.Dock="Top">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock
+                                    Margin="5"
+                                    HorizontalAlignment="Center"
+                                    FontSize="24"
+                                    Text="串口设置" />
+                                <StackPanel Orientation="Horizontal">
+                                    <pu:FormGroup GroupName="MyFormGroup" Header="串口号 : ">
+                                        <ComboBox
+                                            Margin="10"
+                                            ItemsSource="{Binding ComPorts}"
+                                            SelectedValue="{Binding ComConfig.Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Style="{DynamicResource StandardComboBoxStyle}" />
+                                    </pu:FormGroup>
+                                    <Button
+                                        Height="32"
+                                        Margin="10"
+                                        HorizontalAlignment="Left"
+                                        cm:Message.Attach="[Event Click]=[Action GetComPorts]"
+                                        pu:ButtonHelper.Icon="&#xe911;"
+                                        DockPanel.Dock="Left"
+                                        Style="{DynamicResource BoundingButtonStyle}" />
+                                </StackPanel>
+                                <pu:FormGroup GroupName="MyFormGroup" Header="波特率 : ">
+                                    <ComboBox
+                                        Margin="10"
+                                        ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:BaudRate}}}"
+                                        SelectedItem="{Binding ComConfig.BaudRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource StandardComboBoxStyle}" />
+                                </pu:FormGroup>
+                                <pu:FormGroup GroupName="MyFormGroup" Header="校验位 : ">
+                                    <ComboBox
+                                        Margin="10"
+                                        ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:Parity}}}"
+                                        SelectedValue="{Binding ComConfig.Parity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource StandardComboBoxStyle}" />
+                                </pu:FormGroup>
+
+                                <pu:FormGroup GroupName="MyFormGroup" Header="数据位 : ">
+                                    <ComboBox
+                                        Margin="10"
+                                        ItemsSource="{StaticResource DataBits}"
+                                        SelectedItem="{Binding ComConfig.DataBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource StandardComboBoxStyle}" />
+
+                                </pu:FormGroup>
+
+                                <pu:FormGroup GroupName="MyFormGroup" Header="停止位 : ">
+                                    <ComboBox
+                                        Margin="10"
+                                        ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:StopBits}}}"
+                                        SelectedItem="{Binding ComConfig.StopBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        Style="{DynamicResource StandardComboBoxStyle}" />
+
+                                </pu:FormGroup>
+
+                                <pu:FormGroup GroupName="MyFormGroup" Header="超时时间 : ">
+                                    <TextBox Margin="10" Text="{Binding ComConfig.TimeOut}" />
+
+                                </pu:FormGroup>
+
+                                <pu:FormGroup GroupName="MyFormGroup" Header="最大长度 : ">
+                                    <TextBox Margin="10" Text="{Binding ComConfig.MaxLength}" />
+
+                                </pu:FormGroup>
+
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Top"
+                                    Orientation="Horizontal">
+                                    <Button
+                                        Width="50"
+                                        Height="30"
+                                        Margin="10"
+                                        cm:Message.Attach="[Event Click]=[Action OpenCom]"
+                                        Click="HiddenPUDrawer_Click"
+                                        Content="打开"
+                                        Style="{DynamicResource BoundingHoverBackgroundButtonStyle}" />
+                                    <Button
+                                        Width="50"
+                                        Height="30"
+                                        Margin="10"
+                                        cm:Message.Attach="[Event Click]=[Action CloseCom]"
+                                        Content="关闭"
+                                        DockPanel.Dock="Left"
+                                        IsEnabled="{Binding ComConfig.IsOpened}"
+                                        Style="{DynamicResource BoundingButtonStyle}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </pu:Drawer>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <WrapPanel Grid.Row="0" HorizontalAlignment="Left">
+                            <ToggleButton
+                                MaxWidth="120"
+                                Margin="5"
+                                pu:ToggleButtonHelper.CheckedContent="&#xe914;"
+                                Background="#FFA46B"
+                                Content="&#xe912;"
+                                Foreground="#FFFFFF"
+                                IsChecked="{Binding IsOpen, ElementName=DrwMenu, Mode=TwoWay}"
+                                Style="{DynamicResource IconToggleButtonStyle}" />
+                            <Button
+                                Height="32"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                cm:Message.Attach="[Event Click]=[Action OpenCom]"
+                                pu:ButtonHelper.Icon="&#xe6af;"
+                                DockPanel.Dock="Left"
+                                Style="{DynamicResource BoundingButtonStyle}" />
+                            <Button
+                                Height="32"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                cm:Message.Attach="[Event Click]=[Action CloseCom]"
+                                pu:ButtonHelper.Icon="&#xe61f;"
+                                DockPanel.Dock="Left"
+                                Style="{DynamicResource BoundingButtonStyle}" />
+                            <Button
+                                Height="32"
+                                Margin="5"
+                                HorizontalAlignment="Left"
+                                cm:Message.Attach="[Event Click]=[Action Clear]"
+                                pu:ButtonHelper.Icon="&#xe781;"
+                                DockPanel.Dock="Left"
+                                Style="{DynamicResource BoundingButtonStyle}" />
+                        </WrapPanel>
+
+                        <!--  页面消息  -->
+                        <ContentControl
+                            Grid.Row="1"
+                                    Margin="4,0"
+                                    DockPanel.Dock="Top"
+                                   >
+                                    <ScrollViewer ext:ScrollViewerExtensions.AlwaysScrollToEnd="True" >
+                                        <ItemsControl Background="Transparent" ItemsSource="{Binding Messages}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <VirtualizingStackPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Style="{StaticResource MessageBorder}"  Tag="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type UserControl}}}">
+                                                        <Border.ContextMenu>
+                                                            <ContextMenu>
+                                                                <!--  MenuItem绑定命令  -->
+                                                                <MenuItem
+                                                                    cm:Message.Attach="[Event Click]=[Action CopyModbusRtuFrame($this)]"
+                                                                    Header="复制Modbus数据帧" />
+                                                            </ContextMenu>
+                                                        </Border.ContextMenu>
+                                                        <WrapPanel Orientation="Horizontal">
+                                                            <TextBlock
+                                                                Margin="3"
+                                                                VerticalAlignment="Center"
+                                                                Style="{StaticResource MessageTextBlock}"
+                                                                Text="{Binding Time, StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+                                                            <TextBlock
+                                                                Margin="5,0"
+                                                                VerticalAlignment="Center"
+                                                                Style="{StaticResource MessageTextBlock}"
+                                                                Text="{Binding Type}" />
+                                                            <TextBox
+                                                                VerticalAlignment="Center"
+                                                                FontSize="12"
+                                                                FontWeight="Bold"
+                                                                IsReadOnly="True"
+                                                                
+                                                                Style="{StaticResource MessageTextBox}"
+                                                                Text="{Binding Content}"
+                                                                TextWrapping="Wrap" />
+
+                                                            <ItemsControl
+                                                                Background="Transparent"
+                                                                ItemsSource="{Binding MessageSubContents}"
+                                                                Visibility="{Binding MessageSubContents.Count, Converter={cvt:Zero2Collapsed}}">
+                                                                <ItemsControl.ItemsPanel>
+                                                                    <ItemsPanelTemplate>
+                                                                        <WrapPanel VerticalAlignment="Center" Orientation="Horizontal" />
+                                                                    </ItemsPanelTemplate>
+                                                                </ItemsControl.ItemsPanel>
+                                                                <ItemsControl.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock
+                                                                            Margin="3,0,3,0"
+                                                                            VerticalAlignment="Center"
+                                                                            FontWeight="Bold"
+                                                                            Style="{StaticResource ModbusRtuMessageTextBlock}"
+                                                                            Text="{Binding Content}"
+                                                                            TextWrapping="Wrap" />
+                                                                    </DataTemplate>
+                                                                </ItemsControl.ItemTemplate>
+                                                            </ItemsControl>
+
+                                                        </WrapPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                </ContentControl>
+                        <!--  发送区域  -->
+                        <DockPanel
+                            Grid.Row="2"
+                            Height="auto"
+                            DockPanel.Dock="Bottom">
+                            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                                <ComboBox
+                                    Margin="10"
+                                    ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:CrcMode}}}"
+                                    SelectedItem="{Binding CrcMode, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Style="{DynamicResource StandardComboBoxStyle}" />
+                                <Button
+                                    Width="50"
+                                    Height="30"
+                                    Margin="10"
+                                    cm:Message.Attach="[Event Click]=[Action SendCustomFrame]"
+                                    Content="发送"
+                                    Style="{DynamicResource BoundingHoverBackgroundButtonStyle}" />
+                            </StackPanel>
+                            <ContentControl
+                                Height="120"
+                                Margin="10"
+                                Padding="0">
+                                <TextBox
+                                    VerticalContentAlignment="Top"
+                                    Text="{Binding SendMessage}"
+                                    TextWrapping="Wrap">
+                                    <TextBox.InputBindings>
+                                        <KeyBinding
+                                            Key="Enter"
+                                            Command="{Binding ExecuteCommand}"
+                                            CommandParameter="Send" />
+                                    </TextBox.InputBindings>
+                                </TextBox>
+                            </ContentControl>
+                        </DockPanel>
+                        <!--  底部区域  -->
+                        <StackPanel
+                            Grid.Row="3"
+                            Height="30"
+                            Margin="10,0,10,0"
+                            Orientation="Horizontal">
+                            <Controls:BreatheLight IsBreathing="{Binding ComConfig.IsOpened}" />
+                            <TextBlock
+                                Margin="0"
+                                VerticalAlignment="Center"
+                                FontWeight="Bold"
+                                Text="{Binding ComConfig.Port.Key}" />
+                            <TextBlock VerticalAlignment="Center" Text=" : " />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding ComConfig.Port.Value}" />
+                            <TextBlock VerticalAlignment="Center" Text="  " />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding ComConfig.Parity}" />
+                            <TextBlock VerticalAlignment="Center" Text="  " />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding ComConfig.DataBits}" />
+                            <TextBlock
+                                Margin="5,0"
+                                VerticalAlignment="Center"
+                                Text="{Binding ComConfig.StopBits}" />
+
+                            <Border
+                                Margin="30,3"
+                                BorderBrush="LightBlue"
+                                BorderThickness="1" />
+                            <TextBlock VerticalAlignment="Center" Text="Receive: " />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding ReceiveBytesCount}" />
+                            <TextBlock VerticalAlignment="Center" Text=" Bytes" />
+                            <Border
+                                Margin="30,3"
+                                BorderBrush="LightBlue"
+                                BorderThickness="1" />
+                            <TextBlock VerticalAlignment="Center" Text="Send: " />
+                            <TextBlock VerticalAlignment="Center" Text="{Binding SendBytesCount}" />
+                            <TextBlock VerticalAlignment="Center" Text=" Bytes" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="数据监控" Style="{StaticResource tset}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                   
+                  
+                        <pu:Drawer
+                            x:Name="DrwData"
+                            MaxWidth="300"
+                            IsOpen="False"
+                            BorderThickness="0,0,1,0"
+                            ShadowColor="{x:Null}">
+                            <ScrollViewer>
+                            <StackPanel>
+                                <Border Margin="10" DockPanel.Dock="Top">
+                                    <StackPanel Orientation="Vertical">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock
+                                                Margin="5"
+                                                HorizontalAlignment="Center"
+                                                FontSize="24"
+                                                Text="数据监控设置" />
+                                            <!--  导出配置文件  -->
+                                            <Button
+                                                Width="30"
+                                                Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                                Margin="4"
+                                                cm:Message.Attach="[Event Click]=[Action ExportConfig]"
+                                                Cursor="Hand"
+                                                pu:ButtonHelper.Icon="&#xf1a9;"
+                                                DockPanel.Dock="Right" />
+                                            <!--  导入配置文件  -->
+                                            <Button
+                                                Width="30"
+                                                Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                                Margin="4"
+                                                cm:Message.Attach="[Event Click]=[Action ImportConfig]"
+                                                Cursor="Hand"
+                                                pu:ButtonHelper.Icon="&#xf1a8;"
+                                                DockPanel.Dock="Right" />
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="从站ID: ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.SlaveId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="功能码: ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.Function, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="起始地址 Dec: ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.StartAddr, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="起始地址 Hex: ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.StartAddrHex, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="读取数量(word): ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.Quantity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="周期(ms): ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.Period, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="字节序: ">
+                                                <ComboBox
+                                                    ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:ModbusByteOrder}}}"
+                                                    SelectedItem="{Binding DataMonitorConfig.ByteOrder}"
+                                                    Style="{DynamicResource StandardComboBoxStyle}" />
+                                            </pu:FormGroup>
+                                            <pu:FormGroup
+                                                Margin="10"
+                                                GroupName="MyFormGroup"
+                                                Header="数据帧: ">
+                                                <TextBox IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" Text="{Binding DataMonitorConfig.DataFrame, Mode=OneWay}" />
+                                            </pu:FormGroup>
+                                        </StackPanel>
+                                        <StackPanel
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Top"
+                                            Orientation="Horizontal">
+                                            <Button
+                                                Width="50"
+                                                Height="30"
+                                                Margin="10"
+                                                cm:Message.Attach="[Event Click]=[Action OpenAutoRead]"
+                                                Content="打开"
+                                                Style="{DynamicResource BoundingHoverBackgroundButtonStyle}" />
+                                            <Button
+                                                Width="50"
+                                                Height="30"
+                                                Margin="10"
+                                                cm:Message.Attach="[Event Click]=[Action CloseAutoRead]"
+                                                Content="关闭"
+                                                DockPanel.Dock="Left"
+                                                IsEnabled="{Binding ComConfig.IsOpened}"
+                                                Style="{DynamicResource BoundingButtonStyle}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                                <Border Margin="10" DockPanel.Dock="Top">
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock
+                                            Margin="5"
+                                            HorizontalAlignment="Center"
+                                            FontSize="24"
+                                            Text="串口设置" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <pu:FormGroup GroupName="MyFormGroup" Header="串口号 : ">
+                                                <ComboBox
+                                                    Margin="10"
+                                                    ItemsSource="{Binding ComPorts}"
+                                                    SelectedValue="{Binding ComConfig.Port, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                    Style="{DynamicResource StandardComboBoxStyle}" />
+                                            </pu:FormGroup>
+                                            <Button
+                                                Height="32"
+                                                Margin="10"
+                                                HorizontalAlignment="Left"
+                                                cm:Message.Attach="[Event Click]=[Action GetComPorts]"
+                                                pu:ButtonHelper.Icon="&#xe911;"
+                                                DockPanel.Dock="Left"
+                                                Style="{DynamicResource BoundingButtonStyle}" />
+                                        </StackPanel>
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="波特率 : ">
+                                            <ComboBox
+                                                Margin="10"
+                                                ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:BaudRate}}}"
+                                                SelectedItem="{Binding ComConfig.BaudRate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Style="{DynamicResource StandardComboBoxStyle}" />
+                                        </pu:FormGroup>
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="校验位 : ">
+                                            <ComboBox
+                                                Margin="10"
+                                                ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:Parity}}}"
+                                                SelectedValue="{Binding ComConfig.Parity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Style="{DynamicResource StandardComboBoxStyle}" />
+                                        </pu:FormGroup>
+
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="数据位 : ">
+                                            <ComboBox
+                                                Margin="10"
+                                                ItemsSource="{StaticResource DataBits}"
+                                                SelectedItem="{Binding ComConfig.DataBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Style="{DynamicResource StandardComboBoxStyle}" />
+
+                                        </pu:FormGroup>
+
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="停止位 : ">
+                                            <ComboBox
+                                                Margin="10"
+                                                ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:StopBits}}}"
+                                                SelectedItem="{Binding ComConfig.StopBits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                Style="{DynamicResource StandardComboBoxStyle}" />
+
+                                        </pu:FormGroup>
+
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="超时时间 : ">
+                                            <TextBox Margin="10" Text="{Binding ComConfig.TimeOut}" />
+
+                                        </pu:FormGroup>
+
+                                        <pu:FormGroup GroupName="MyFormGroup" Header="最大长度 : ">
+                                            <TextBox Margin="10" Text="{Binding ComConfig.MaxLength}" />
+
+                                        </pu:FormGroup>
+
+                                        <StackPanel
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Top"
+                                            Orientation="Horizontal">
+                                            <Button
+                                                Width="50"
+                                                Height="30"
+                                                Margin="10"
+                                                cm:Message.Attach="[Event Click]=[Action OpenCom]"
+                                                Click="HiddenPUDrawer_Click"
+                                                Content="打开"
+                                                Style="{DynamicResource BoundingHoverBackgroundButtonStyle}" />
+                                            <Button
+                                                Width="50"
+                                                Height="30"
+                                                Margin="10"
+                                                cm:Message.Attach="[Event Click]=[Action CloseCom]"
+                                                Content="关闭"
+                                                DockPanel.Dock="Left"
+                                                IsEnabled="{Binding ComConfig.IsOpened}"
+                                                Style="{DynamicResource BoundingButtonStyle}" />
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                            </ScrollViewer>
+                        </pu:Drawer>
+                   
+                   
+                    <DockPanel Grid.Column="1">
+                        <!--  头部区域  -->
+                        <Grid DockPanel.Dock="Top">
+
+                            <DockPanel LastChildFill="False">
+                                <ToggleButton
+                                    MaxWidth="120"
+                                    Margin="5"
+                                    pu:ToggleButtonHelper.CheckedContent="&#xe914;"
+                                    Background="#FFA46B"
+                                    Content="&#xe912;"
+                                    Foreground="#FFFFFF"
+                                    IsChecked="{Binding IsOpen, ElementName=DrwData, Mode=TwoWay}"
+                                    Style="{DynamicResource IconToggleButtonStyle}" />
+                                <!--  打开数据监控  -->
+                                <Button
+                                    Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                    Margin="5"
+                                    HorizontalAlignment="Left"
+                                    cm:Message.Attach="[Event Click]=[Action OpenAutoRead]"
+                                    Background="{StaticResource Green_Background}"
+                                    BorderBrush="{StaticResource Green_BorderBrush}"
+                                    pu:ButtonHelper.Icon="&#xe6af;"
+                                    Cursor="Hand"
+                                    Foreground="{StaticResource Green_Foreground}"
+                                    IsEnabled="{Binding DataMonitorConfig.IsOpened, Converter={cvt:ReverseBool}}" />
+
+                                <!--  关闭数据监控  -->
+                                <Button
+                                    Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                    Margin="5"
+                                    HorizontalAlignment="Left"
+                                    cm:Message.Attach="[Event Click]=[Action CloseAutoRead]"
+                                    pu:ButtonHelper.Icon="&#xe61f;"
+                                    IsEnabled="{Binding DataMonitorConfig.IsOpened}" />
+
+
+
+
+                                <!--  过滤器  -->
+                                <Button
+                                    Width="50"
+                                    Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                    Margin="5"
+                                    FontSize="16"
+                                    Background="{x:Null}"
+                                    HorizontalAlignment="Left"
+                                    cm:Message.Attach="[Event Click]=[Action OperateFilter]"
+                                    pu:ButtonHelper.Icon="&#xe6e9;"
+                                    pu:IconHelper.FontSize="30"
+                                    ToolTip="过滤器"
+                                    Cursor="Hand" />
+
+
+
+                                <!--  查看消息  -->
+                                <!--  <Button  -->
+                                <!--  Width="30"  -->
+                                <!--  Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"  -->
+                                <!--  Margin="5"  -->
+                                <!--  hc:Poptip.Content="查看消息"  -->
+                                <!--  Command="{Binding ExecuteCommand}"  -->
+                                <!--  CommandParameter="ViewMessage"  -->
+                                <!--    -->
+                                <!--  DockPanel.Dock="Right"  -->
+                                <!--  Style="{StaticResource Blue_CircleButton}" />  -->
+                                <!--  清空消息按钮  -->
+                                <Button
+                                    Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                    Margin="5"
+                                    cm:Message.Attach="[Event Click]=[Action Clear]"
+                                    pu:ButtonHelper.Icon="&#xe781;"
+                                    DockPanel.Dock="Right" />
+                                <!--  暂停界面更新  -->
+                                <Button
+                                    Height="{Binding RelativeSource={RelativeSource self}, Path=Width}"
+                                    Margin="5"
+                                    HorizontalAlignment="Left"
+                                    cm:Message.Attach="[Event Click]=[Action Pause]"
+                                    pu:ButtonHelper.Icon="&#xe60c;"
+                                    Cursor="Hand"
+                                    DockPanel.Dock="Right" />
+                            </DockPanel>
+                        </Grid>
+                        <DataGrid
+                            MinWidth="100"
+                            Margin="0"
+                            AutoGenerateColumns="False"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CanUserSortColumns="False"
+                            FrozenColumnCount="4"
+                            ItemsSource="{Binding ModbusRtuDataDataView, IsAsync=True}"
+                            Style="{StaticResource dgstyle}"
+                            
+                            RowHeaderWidth="60">
+                            <!-- <DataGrid.RowHeaderTemplate> -->
+                            <!--     <DataTemplate> -->
+                            <!--         <Border> -->
+                            <!--             <TextBlock HorizontalAlignment="Center" -->
+                            <!--                        Text="{Binding (pu:DataGridHelper.RowIndex), RelativeSource={RelativeSource AncestorType=DataGridRow}, Mode=OneWay}" /> -->
+                            <!--         </Border> -->
+                            <!--     </DataTemplate> -->
+                            <!-- </DataGrid.RowHeaderTemplate> -->
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn Header="名称">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox MinWidth="120" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="值">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Border
+                                                MinWidth="60"
+                                                Padding="8,4"
+                                                BorderThickness="1"
+                                                CornerRadius="4">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Name, Converter={cvt:StringIsNullOrWhiteSpace2Visibility}}" Value="false">
+                                                                <Setter Property="Background" Value="{StaticResource Green_Background}" />
+                                                                <Setter Property="BorderBrush" Value="{StaticResource Green_BorderBrush}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding Name, Converter={cvt:StringIsNullOrWhiteSpace2Visibility}}" Value="true">
+                                                                <Setter Property="Background" Value="{StaticResource Purple_Background}" />
+                                                                <Setter Property="BorderBrush" Value="{StaticResource Purple_BorderBrush}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <TextBlock FontSize="13" Text="{Binding Value}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Name, Converter={cvt:StringIsNullOrWhiteSpace2Visibility}}" Value="false">
+                                                                    <Setter Property="Foreground" Value="{StaticResource Green_Foreground}" />
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding Name, Converter={cvt:StringIsNullOrWhiteSpace2Visibility}}" Value="true">
+                                                                    <Setter Property="Foreground" Value="{StaticResource Purple_Foreground}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Border>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+
+                                <DataGridTemplateColumn Header="单位">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox
+                                                MinWidth="40"
+                                                HorizontalContentAlignment="Center"
+                                                Text="{Binding Unit, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="倍率">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox
+                                                MinWidth="40"
+                                                HorizontalContentAlignment="Center"
+                                                Text="{Binding Rate, Mode=TwoWay, UpdateSourceTrigger=LostFocus}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+
+                                <DataGridTemplateColumn Header="数据类型">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <ComboBox
+                                                MinWidth="135"
+                                                Margin="0"
+                                                ItemsSource="{Binding Source={cvt:EnumBindingSource {x:Type model:DataType}}}"
+                                                SelectedValue="{Binding Type, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTextColumn
+                                    Binding="{Binding Addr, StringFormat={}{0:00}}"
+                                    Header="地址Dec"
+                                    IsReadOnly="True" />
+                                <DataGridTextColumn
+                                    Binding="{Binding Addr, StringFormat=0x{0:X2}}"
+                                    Header="地址Hex"
+                                    IsReadOnly="True" />
+
+                                <DataGridTextColumn
+                                    Binding="{Binding DataHex}"
+                                    Header="原始值Hex(高低)"
+                                    IsReadOnly="True" />
+
+                                <DataGridTextColumn
+                                    Binding="{Binding UpdateTime, StringFormat={}{0:HH:mm:ss}}"
+                                    Header="更新时间"
+                                    IsReadOnly="True" />
+
+                                <DataGridTemplateColumn Header="写入值">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBox HorizontalContentAlignment="Center" Text="{Binding WriteValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+
+                                <DataGridTemplateColumn Header="操作">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button cm:Message.Attach="[Event Click]=[Action ModburRtuDataWrite($this)]" Content="写入" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </DockPanel>
+
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</UserControl>
