@@ -24,8 +24,8 @@ namespace WisdomTool.ViewModels
     [AddINotifyPropertyChangedInterface]
     public class OverToSingleViewModel : Caliburn.Micro.Screen
     {
-        public string ExcelPath { get; set; } = @"C:\Users\clongc\Desktop\资金测算_公式(宝应)01(1) 的副本.xlsx";
-        public string TemplateExcelPath { get; set; } = @"C:\Users\clongc\Desktop\HaiLing\附件12模板.xlsx";
+        public string ExcelPath { get; set; } //= @"C:\Users\clongc\Desktop\资金测算_公式(宝应)01(1) 的副本.xlsx";
+        public string TemplateExcelPath { get; set; } //= @"C:\Users\clongc\Desktop\HaiLing\附件12模板.xlsx";
         //public string TmpPath { get; set; } = @"C:\Users\clongc\Desktop\HaiLing\Tmp\";
         public string TmpPath { get; set; }
         public string MergedName { get; set; } //= "请点击左侧按钮，注意输出文件夹不能选择Tmp";
