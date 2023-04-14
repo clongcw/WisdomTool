@@ -15,9 +15,7 @@ namespace WisdomTool.Enums
         [Description("横向数据源")]
         横向数据源 = 0,
         [Description("纵向数据源")]
-        纵向数据源 = 1,
-        [Description("自定义数据源")]
-        自定义数据源 = 2
+        纵向数据源 = 1
     }
 
 }

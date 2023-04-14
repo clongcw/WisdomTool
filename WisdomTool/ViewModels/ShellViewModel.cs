@@ -48,7 +48,6 @@ namespace WisdomTool.ViewModels
         public async Task Navigate(Screen viewmodel)
         {
             await ActivateItemAsync(viewmodel, new CancellationToken());
-
         }
 
     }

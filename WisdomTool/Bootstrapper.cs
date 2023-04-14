@@ -65,10 +65,10 @@ namespace WisdomTool
             _container.BuildUp(instance);
         }
 
-        //protected override void OnExit(object sender, EventArgs e)
-        //{
-        //    //关闭WPF之后即关闭所有进程
-        //    Environment.Exit(0);
-        //}
+        protected override void OnExit(object sender, EventArgs e)
+        {
+            //关闭WPF之后即关闭所有进程
+            Environment.Exit(0);
+        }
     }
 }
